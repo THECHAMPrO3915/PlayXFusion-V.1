@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlayXFusion</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF0080;
+            --secondary: #00FF9F;
+            --background: #1a1a2e;
+            --card: #2a2a4e;
+            --text: #ffffff;
+            --neon-glow: 0 0 10px var(--primary),
+                         0 0 20px var(--primary),
+                         0 0 30px var(--primary);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            font-family: 'VT323', monospace;
+            min-height: 100vh;
+            padding: 2rem;
+            background-image: 
+                radial-gradient(circle at 25px 25px, rgba(255, 0, 128, 0.15) 2%, transparent 0%),
+                radial-gradient(circle at 75px 75px, rgba(0, 255, 159, 0.15) 2%, transparent 0%);
+            background-size: 100px 100px;
+            animation: backgroundScroll 30s linear infinite;
+        }
+
+        @keyframes backgroundScroll {
+            from { background-position: 0 0; }
+            to { background-position: 100px 100px; }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-family: 'Press Start 2P', cursive;
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 2rem;
+            text-shadow: 4px 4px 0px var(--secondary);
+            font-size: 2.5rem;
+            animation: titlePulse 2s infinite;
+            position: relative;
+        }
+
+        @keyframes titlePulse {
+            0%, 100% { text-shadow: 4px 4px 0px var(--secondary), var(--neon-glow); }
+            50% { text-shadow: 4px 4px 0px var(--secondary); }
+        }
+
+        .search-container {
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        #searchInput {
+            width: 100%;
+            max-width: 400px;
+            padding: 1rem;
+            font-size: 1.2rem;
+            border: 3px solid var(--primary);
+            background: var(--card);
+            color: var(--text);
+            border-radius: 8px;
+            font-family: 'VT323', monospace;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        #searchInput:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 15px rgba(0, 255, 159, 0.3);
+            transform: scale(1.02);
+        }
+
+        .search-container::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 20px);
+            max-width: 380px;
+            height: calc(100% + 10px);
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            z-index: 0;
+            opacity: 0.5;
+            filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .search-container:hover::before {
+            opacity: 0.8;
+            filter: blur(15px);
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 2rem;
+            padding: 1rem;
+        }
+
+        .game-card {
+            background: var(--card);
+            border: 3px solid var(--primary);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem;
+            position: relative;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px) rotateX(10deg);
+            border-color: transparent;
+        }
+
+        .game-card:hover::before {
+            opacity: 1;
+        }
+
+        .game-icon {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-card:hover .game-icon {
+            transform: scale(1.1);
+        }
+
+        .game-name {
+            font-size: 1.5rem;
+            text-align: center;
+            margin-top: auto;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: none;
+            position: relative;
+        }
+
+        .game-card:hover .game-name {
+            animation: glitch 0.3s infinite;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .games-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 1rem;
+            }
+
+            .game-icon {
+                width: 80px;
+                height: 80px;
+            }
+        }
+
+        .loading {
+            text-align: center;
+            font-size: 2rem;
+            color: var(--secondary);
+            margin-top: 2rem;
+            animation: loadingPulse 1s infinite;
+        }
+
+        @keyframes loadingPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .no-results {
+            text-align: center;
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-top: 2rem;
+            animation: noResultsShake 0.5s ease-in-out;
+        }
+
+        @keyframes noResultsShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Play X Fusion</h1>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search games...">
+        </div>
+        <div id="gamesContainer" class="games-grid">
+            <div class="loading">Loading games...</div>
+        </div>
+    </div>
+
+    <script>
+        async function fetchGames() {
+            try {
+                const response = await fetch('https://docs.google.com/spreadsheets/d/1dLAlTi0w9ErrgLI-NvtvA_fUSsyv1WBi1IHNye51IfY/export?format=csv');
+                const data = await response.text();
+                return parseCSV(data);
+            } catch (error) {
+                console.error('Error fetching games:', error);
+                return [];
+            }
+        }
+
+        function parseCSV(csv) {
+            const lines = csv.split('\n');
+            const games = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const [name, icon, link] = lines[i].split(',').map(item => item.trim());
+                if (name && icon && link) {
+                    games.push({ name, icon, link });
+                }
+            }
+            
+            return games;
+        }
+
+        function createGameCard(game) {
+            return `
+                <a href="${game.link}" target="_blank" class="game-card">
+                    <img src="${game.icon}" alt="${game.name}" class="game-icon">
+                    <div class="game-name">${game.name}</div>
+                </a>
+            `;
+        }
+
+        function renderGames(games, searchTerm = '') {
+            const container = document.getElementById('gamesContainer');
+            const filteredGames = games.filter(game => 
+                game.name.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+
+            if (filteredGames.length === 0) {
+                container.innerHTML = '<div class="no-results">No games found</div>';
+                return;
+            }
+
+            container.innerHTML = filteredGames.map(createGameCard).join('');
+        }
+
+        let allGames = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            allGames = await fetchGames();
+            renderGames(allGames);
+
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', (e) => {
+                renderGames(allGames, e.target.value);
+            });
+        });
+    </script>
+</body>
+</html>
